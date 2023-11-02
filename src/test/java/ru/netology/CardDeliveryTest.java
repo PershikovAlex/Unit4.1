@@ -8,6 +8,9 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Keys;
 
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
@@ -15,22 +18,24 @@ import static com.codeborne.selenide.Selenide.open;
 class CardDeliveryTest {
     @BeforeEach
     void SetUp() {
-        Configuration.holdBrowserOpen = true;
         open("http://localhost:9999");
+    }
+
+    public static String getLocalDate(int days) {
+        return LocalDate.now().plusDays(days).format(DateTimeFormatter.ofPattern("dd.MM.yyyy", new Locale("ru")));
     }
 
     @Test
     void shouldTest() {
+        String meetingDate = getLocalDate(5);
         SelenideElement form = $(".form");
-        form.$("[data-test-id=city] input").setValue("Екатеринбург");
-        //form.$("[data-test-id='date'] .input__control").doubleClick();
-        //form.$("[data-test-id='date'] .input__control").sendKeys(Keys.DELETE);
-        //form.$("[data-test-id='date'] input").setValue("04.11.2023");
-        form.$("[data-test-id=name] input").setValue("Першиков Александр");
-        form.$("[data-test-id=phone] input").setValue("+79222161614");
-        form.$("[data-test-id=agreement]").click();
-        form.$(".button").click();
-        //form.$("[data-test-id]=notification").shouldHave(Condition.exactText("Успешно!"));
+        $("[data-test-id=city] input").setValue("Екатеринбург");
+        $("[data-test-id='date'] .input__control").doubleClick().sendKeys(meetingDate);
+        $("[data-test-id=name] input").setValue("Першиков Александр");
+        $("[data-test-id=phone] input").setValue("+79222161614");
+        $("[data-test-id=agreement]").click();
+        $(".button").click();
+        $("[data-test-id='notification']").shouldBe(Condition.hidden);
+        $("[data-test-id='notification'] .notification__content").shouldHave(Condition.exactText("Встреча успешно забронирована на " + meetingDate), Duration.ofSeconds(11));
     }
-
 }
