@@ -21,9 +21,6 @@ class CardDeliveryTest {
         open("http://localhost:9999");
     }
 
-    /*public static String getLocalDate(int days) {
-        return LocalDate.now().plusDays(days).format(DateTimeFormatter.ofPattern("dd.MM.yyyy", new Locale("ru")));
-    }*/
     public String generateDate(long addDays, String pattern) {
         return LocalDate.now().plusDays(addDays).format(DateTimeFormatter.ofPattern(pattern));
     }
