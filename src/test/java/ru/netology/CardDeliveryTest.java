@@ -21,21 +21,24 @@ class CardDeliveryTest {
         open("http://localhost:9999");
     }
 
-    public static String getLocalDate(int days) {
+    /*public static String getLocalDate(int days) {
         return LocalDate.now().plusDays(days).format(DateTimeFormatter.ofPattern("dd.MM.yyyy", new Locale("ru")));
+    }*/
+    public String generateDate(long addDays, String pattern) {
+        return LocalDate.now().plusDays(addDays).format(DateTimeFormatter.ofPattern(pattern));
     }
 
     @Test
     void shouldTest() {
-        String meetingDate = getLocalDate(5);
+        String planningDate = generateDate(5, "dd.MM.yyyy");
         SelenideElement form = $(".form");
         $("[data-test-id=city] input").setValue("Екатеринбург");
-        $("[data-test-id='date'] .input__control").doubleClick().sendKeys(meetingDate);
+        $("[data-test-id='date'] .input__control").doubleClick().sendKeys(planningDate);
         $("[data-test-id=name] input").setValue("Першиков Александр");
         $("[data-test-id=phone] input").setValue("+79222161614");
         $("[data-test-id=agreement]").click();
         $(".button").click();
         $("[data-test-id='notification']").shouldBe(Condition.hidden);
-        $("[data-test-id='notification'] .notification__content").shouldHave(Condition.exactText("Встреча успешно забронирована на " + meetingDate), Duration.ofSeconds(11));
+        $("[data-test-id='notification'] .notification__content").shouldHave(Condition.exactText("Встреча успешно забронирована на " + planningDate), Duration.ofSeconds(11));
     }
 }
